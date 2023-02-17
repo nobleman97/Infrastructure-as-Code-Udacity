@@ -1,5 +1,5 @@
 Description: >
-    Carlos Rivas / Udacity
+    David Omokhodion / Udacity_Project2
     This template deploys a VPC, with a pair of public and private subnets spread 
     across two Availabilty Zones. It deploys an Internet Gateway, with a default 
     route on the public subnets. It deploys a pair of NAT Gateways (one in each AZ), 
@@ -37,6 +37,42 @@ Parameters:
         Default: 10.0.3.0/24
 
 Resources:
+    # AWSTemplateFormatVersion: "2010-09-09"
+    IAMs3Role: 
+        Type: "AWS::IAM::Role"
+        Properties: 
+            ManagedPolicyArns:
+              - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+            AssumeRolePolicyDocument: 
+                Version: "2012-10-17"
+                Statement: 
+                - 
+                    Effect: "Allow"
+                    Principal:
+                        Service: 
+                            - "ec2.amazonaws.com"
+                    Action: 
+                    - "sts:AssumeRole"
+            Path: "/"
+    RolePolicies: 
+        Type: "AWS::IAM::Policy"
+        Properties: 
+            PolicyName: "root"
+            PolicyDocument: 
+                Version: "2012-10-17"
+                Statement: 
+                - Effect: "Allow"
+                  Action: "*"
+                  Resource: "*"
+            Roles: 
+                - Ref: "IAMs3Role"
+    RootInstanceProfile: 
+        Type: "AWS::IAM::InstanceProfile"
+        Properties: 
+            Path: "/"
+            Roles: 
+                - Ref: "IAMs3Role"
+
 
     VPC: 
         Type: AWS::EC2::VPC
@@ -200,6 +236,18 @@ Resources:
             SubnetId: !Ref PrivateSubnet2
 
 Outputs: 
+
+    IAMs3Role:
+      Description: "Allow EC2 instances to manage webApp"
+      Value: !Ref RootInstanceProfile
+      Export: 
+        Name: !Sub ${EnvironmentName}-IAM-NAME
+
+    IAMs3RoleARN:
+      Description: "IAM instance profile ARN"
+      Value: !GetAtt IAMs3Role.Arn
+      Export: 
+        Name: !Sub ${EnvironmentName}-IAM-ARN
 
     VPC: 
         Description: A reference to the created VPC
