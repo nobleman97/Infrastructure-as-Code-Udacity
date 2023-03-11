@@ -28,3 +28,7 @@ You can run the supporting material in two easy steps:
 # Check the region in the update.sh file
 ./update.sh mySecStack servers.yml server-parameters.json
 ```
+
+
+
+# LoadBalancer URL: http://serve-WebAp-1AX575C827ZDS-77678723.us-west-2.elb.amazonaws.com
